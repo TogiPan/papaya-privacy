@@ -39,6 +39,16 @@
   .btn.secondary { background: var(--leaf); }
   .btn:active { opacity: 0.85; }
   .soon { color: var(--muted); font-size: 16px; margin: 0; }
+  #req-form input[type=email] {
+    width: 100%; font-size: 18px; padding: 14px; border-radius: 12px;
+    border: 2px solid var(--lime); margin-bottom: 10px; font-family: inherit;
+  }
+  #req-form input[type=email]:focus { outline: none; border-color: var(--leaf); }
+  button.btn { width: 100%; border: 0; cursor: pointer; font-family: inherit; }
+  button.btn:disabled { opacity: 0.6; }
+  .msg { margin: 10px 0 0; font-size: 16px; min-height: 1em; }
+  .msg.ok { color: var(--leaf); font-weight: 700; }
+  .msg.err { color: #D64545; }
   .detected { outline: 3px solid var(--papaya); }
   footer { text-align: center; color: var(--muted); font-size: 14px; }
   footer a { color: var(--leaf); }
@@ -68,13 +78,21 @@
   <section class="card" id="android">
     <h2>🤖 Android <span class="badge" hidden>Your phone</span></h2>
     <div id="android-ready" hidden>
+      <p style="margin:4px 0 12px"><strong>Step 1:</strong> Tell us the Gmail address you use for Google Play. We'll add you to the tester list, usually within a day.</p>
+      <form id="req-form" novalidate>
+        <input id="req-email" type="email" inputmode="email" autocomplete="email" placeholder="you@gmail.com" required>
+        <input id="req-hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+        <button class="btn" id="req-btn" type="submit">Request access</button>
+        <p class="msg" id="req-msg" role="status"></p>
+      </form>
+      <p style="margin:18px 0 8px"><strong>Step 2:</strong> Once you're added, come back and:</p>
       <ol>
-        <li>Tap <strong>Join on Android</strong> and sign in with your Google account.</li>
+        <li>Tap <strong>Join on Android</strong> and sign in with that Google account.</li>
         <li>Tap <strong>Accept invite</strong> (or <strong>Become a tester</strong>).</li>
-        <li>Tap the <strong>Google Play</strong> link on that page and install Papaya.</li>
+        <li>Tap the <strong>Google Play</strong> link and install Papaya.</li>
       </ol>
-      <a class="btn" id="android-link" href="#">Join on Android</a>
-      <p class="soon" style="margin-top:12px">Can't join? Your Google email needs to be on our tester list. Email us and we'll add you.</p>
+      <a class="btn secondary" id="android-link" href="#">Join on Android</a>
+      <p class="soon" style="margin-top:12px">We only use your email to give you test access. See our <a href="../#testers">privacy policy</a>.</p>
     </div>
     <p class="soon" id="android-soon">Android testing opens soon. Send us a message and we'll add you.</p>
   </section>
@@ -96,6 +114,35 @@
     document.getElementById("android-ready").hidden = false;
     document.getElementById("android-soon").hidden = true;
   }
+
+  // ---- Android tester sign-up -> Supabase (public anon key; it can only call request_tester_access) ----
+  var SB_URL = "https://hpsykgdwfztkburuakva.supabase.co";
+  var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhwc3lrZ2R3Znp0a2J1cnVha3ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2Nzg3ODcsImV4cCI6MjA5OTI1NDc4N30.cItV7NgFD_gtggDcIlpKee0AGn8abJ-NuKunl8fmAfs";
+  document.getElementById("req-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = document.getElementById("req-msg"), btn = document.getElementById("req-btn");
+    var email = document.getElementById("req-email").value.trim();
+    msg.className = "msg"; msg.textContent = "";
+    if (document.getElementById("req-hp").value) return; // bot
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      msg.className = "msg err"; msg.textContent = "Please enter a valid email address."; return;
+    }
+    btn.disabled = true; btn.textContent = "Sending…";
+    fetch(SB_URL + "/rest/v1/rpc/request_tester_access", {
+      method: "POST",
+      headers: { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ p_email: email })
+    }).then(function (r) {
+      return r.json().then(function (j) { if (!r.ok) throw new Error(j.message || "Something went wrong"); });
+    }).then(function () {
+      msg.className = "msg ok";
+      msg.textContent = "✓ Thanks! We'll add " + email + " soon. Then come back and tap Join on Android.";
+      btn.textContent = "Request sent";
+    }).catch(function (err) {
+      msg.className = "msg err"; msg.textContent = err.message + ". Please try again.";
+      btn.disabled = false; btn.textContent = "Request access";
+    });
+  });
 
   // Put the visitor's own platform first and highlight it
   var ua = navigator.userAgent || "";
