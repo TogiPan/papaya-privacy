@@ -50,6 +50,7 @@
   .msg.ok { color: var(--leaf); font-weight: 700; }
   .msg.err { color: #D64545; }
   .detected { outline: 3px solid var(--papaya); }
+  [hidden] { display: none !important; }
   footer { text-align: center; color: var(--muted); font-size: 14px; }
   footer a { color: var(--leaf); }
 </style>
@@ -96,6 +97,8 @@
     </div>
     <p class="soon" id="android-soon">Android testing opens soon. Send us a message and we'll add you.</p>
   </section>
+
+  <p id="show-other" hidden style="text-align:center;margin:0 0 18px"><a href="#" style="color:var(--leaf)"></a></p>
 
   <footer>
     <p>Questions? <a href="mailto:togijam@yahoo.com">togijam@yahoo.com</a> ·
@@ -150,10 +153,18 @@
   var isAndroid = /Android/i.test(ua);
   var mine = isIOS ? "ios" : isAndroid ? "android" : null;
   if (mine) {
+    // Show only the visitor's own platform; the other card stays hidden behind a small link
     var el = document.getElementById(mine);
+    var other = document.getElementById(mine === "ios" ? "android" : "ios");
     el.classList.add("detected");
     el.querySelector(".badge").hidden = false;
-    el.parentNode.insertBefore(el, el.parentNode.firstChild);
+    other.hidden = true;
+    var sw = document.getElementById("show-other");
+    sw.hidden = false;
+    sw.querySelector("a").textContent = mine === "ios" ? "Using an Android phone?" : "Using an iPhone?";
+    sw.querySelector("a").addEventListener("click", function (e) {
+      e.preventDefault(); other.hidden = false; sw.hidden = true;
+    });
   }
 </script>
 </body>
