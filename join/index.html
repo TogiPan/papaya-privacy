@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join Papaya</title>
+<meta name="description" content="Become a Papaya tester: collect papayas at local shops and grow your jungle monkey.">
+<style>
+  :root {
+    --jungle: #1B4332; --leaf: #2D6A4F; --lime: #95D5B2; --papaya: #FF8552;
+    --cream: #FFF8F0; --ink: #1D2B26; --muted: #6B7F76; --white: #fff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--cream); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px; line-height: 1.5;
+  }
+  .hero { background: var(--jungle); color: var(--white); text-align: center; padding: 40px 20px 32px; }
+  .hero .logo { font-size: 64px; line-height: 1; }
+  .hero h1 { margin: 12px 0 4px; font-size: 34px; }
+  .hero p { margin: 0; color: var(--lime); font-size: 18px; }
+  main { max-width: 520px; margin: 0 auto; padding: 24px 16px 48px; }
+  .card {
+    background: var(--white); border-radius: 18px; padding: 22px 20px; margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(27, 67, 50, 0.08);
+  }
+  .card h2 { margin: 0 0 6px; font-size: 22px; display: flex; align-items: center; gap: 10px; }
+  .card .badge {
+    font-size: 12px; font-weight: 800; background: var(--papaya); color: var(--white);
+    border-radius: 999px; padding: 3px 10px;
+  }
+  ol { padding-left: 22px; margin: 10px 0 18px; }
+  li { margin-bottom: 8px; }
+  .btn {
+    display: block; text-align: center; text-decoration: none; font-weight: 800; font-size: 19px;
+    padding: 16px; border-radius: 14px; background: var(--papaya); color: var(--white);
+  }
+  .btn.secondary { background: var(--leaf); }
+  .btn:active { opacity: 0.85; }
+  .soon { color: var(--muted); font-size: 16px; margin: 0; }
+  .detected { outline: 3px solid var(--papaya); }
+  footer { text-align: center; color: var(--muted); font-size: 14px; }
+  footer a { color: var(--leaf); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="logo">🥭🐒</div>
+  <h1>Join Papaya</h1>
+  <p>Collect papayas at local shops. Grow your monkey.</p>
+</header>
+
+<main>
+  <section class="card" id="ios">
+    <h2>📱 iPhone <span class="badge" hidden>Your phone</span></h2>
+    <ol>
+      <li>Install Apple's free <strong>TestFlight</strong> app.</li>
+      <li>Come back here and tap <strong>Join on iPhone</strong>.</li>
+      <li>In TestFlight, tap <strong>Accept</strong>, then <strong>Install</strong>.</li>
+    </ol>
+    <a class="btn secondary" href="https://apps.apple.com/app/testflight/id899247664">1. Get TestFlight</a>
+    <div style="height:10px"></div>
+    <a class="btn" id="ios-link" href="#">2. Join on iPhone</a>
+  </section>
+
+  <section class="card" id="android">
+    <h2>🤖 Android <span class="badge" hidden>Your phone</span></h2>
+    <div id="android-ready" hidden>
+      <ol>
+        <li>Tap <strong>Join on Android</strong> and sign in with your Google account.</li>
+        <li>Tap <strong>Become a tester</strong>.</li>
+        <li>Tap the <strong>Google Play</strong> link on that page and install Papaya.</li>
+      </ol>
+      <a class="btn" id="android-link" href="#">Join on Android</a>
+    </div>
+    <p class="soon" id="android-soon">Android testing opens soon. Send us a message and we'll add you.</p>
+  </section>
+
+  <footer>
+    <p>Questions? <a href="mailto:togijam@yahoo.com">togijam@yahoo.com</a> ·
+      <a href="../">Privacy policy</a></p>
+  </footer>
+</main>
+
+<script>
+  // ---- Tester links: edit these two lines to change where the buttons go ----
+  var IOS_URL = "https://testflight.apple.com/join/AvCpckqg";
+  var ANDROID_URL = ""; // Play Console testing opt-in link, e.g. https://play.google.com/apps/testing/com.papaya.loyalty
+
+  document.getElementById("ios-link").href = IOS_URL;
+  if (ANDROID_URL) {
+    document.getElementById("android-link").href = ANDROID_URL;
+    document.getElementById("android-ready").hidden = false;
+    document.getElementById("android-soon").hidden = true;
+  }
+
+  // Put the visitor's own platform first and highlight it
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/i.test(ua);
+  var mine = isIOS ? "ios" : isAndroid ? "android" : null;
+  if (mine) {
+    var el = document.getElementById(mine);
+    el.classList.add("detected");
+    el.querySelector(".badge").hidden = false;
+    el.parentNode.insertBefore(el, el.parentNode.firstChild);
+  }
+</script>
+</body>
+</html>
