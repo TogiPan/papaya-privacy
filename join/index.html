@@ -70,10 +70,11 @@
     <div id="android-ready" hidden>
       <ol>
         <li>Tap <strong>Join on Android</strong> and sign in with your Google account.</li>
-        <li>Tap <strong>Become a tester</strong>.</li>
+        <li>Tap <strong>Accept invite</strong> (or <strong>Become a tester</strong>).</li>
         <li>Tap the <strong>Google Play</strong> link on that page and install Papaya.</li>
       </ol>
       <a class="btn" id="android-link" href="#">Join on Android</a>
+      <p class="soon" style="margin-top:12px">Can't join? Your Google email needs to be on our tester list. Email us and we'll add you.</p>
     </div>
     <p class="soon" id="android-soon">Android testing opens soon. Send us a message and we'll add you.</p>
   </section>
@@ -87,7 +88,7 @@
 <script>
   // ---- Tester links: edit these two lines to change where the buttons go ----
   var IOS_URL = "https://testflight.apple.com/join/AvCpckqg";
-  var ANDROID_URL = ""; // Play Console testing opt-in link, e.g. https://play.google.com/apps/testing/com.papaya.loyalty
+  var ANDROID_URL = "https://play.google.com/apps/internaltest/4701500866397615563"; // Play Console internal testing link
 
   document.getElementById("ios-link").href = IOS_URL;
   if (ANDROID_URL) {
